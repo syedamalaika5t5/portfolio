@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syeda Malaika | Web Developer Portfolio</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="p4.css">
+    <style>
+        .skill-item { cursor: pointer; pointer-events: auto; position: relative; z-index: 3; }
+        /* Ensure modal is clickable above animated/translated elements */
+        .modal, .modal-backdrop { pointer-events: auto !important; }
+        .modal { z-index: 20000 !important; }
+        .modal-backdrop { z-index: 19999 !important; }
+        .btn-close, .btn { pointer-events: auto !important; }
+        .modal-dialog, .modal-content { z-index: 20001 !important; }
+        .btn-close { z-index: 30000 !important; }
+        /* Modal enter/exit animations */
+        @keyframes modalIn {
+            0% { transform: translateY(20px) scale(0.98); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes modalOut {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(20px) scale(0.98); opacity: 0; }
+        }
+        .modal-animate-in { animation: modalIn 320ms cubic-bezier(.2,.8,.2,1) both; }
+        .modal-animate-out { animation: modalOut 220ms cubic-bezier(.4,.0,.2,1) both; }
+        /* Thin animated border using conic-gradient and masking (only border visible) */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 2;
+            overflow: visible;
+            border-radius: 0.5rem;
+            background-clip: padding-box;
+            background-color: #0b0b0b;
+        }
+
+        :root { --modal-border-thickness: 6px; }
+
+                .modal-content::before {
+                /* animated gradient rim (electric style) */
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                pointer-events: none;
+                border-radius: inherit;
+                padding: var(--modal-border-thickness);
+                    background: linear-gradient(90deg, #8e2de2 0%, #c026d3 20%, #ff4fd8 45%, #7b2ff7 70%, #8e2de2 100%);
+                    background-size: 260% 100%;
+                background-position: 0% 50%;
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                    animation: moveGradient 2.6s linear infinite, electricFlicker 1.2s steps(4, end) infinite;
+                    filter: url(#electric) drop-shadow(0 0 26px rgba(186,0,255,0.95));
+                    box-shadow: 0 0 44px rgba(186,0,255,0.18), inset 0 0 8px rgba(255,255,255,0.03);
+            }
+
+            @keyframes electricFlicker {
+                0% { opacity: 1; }
+                10% { opacity: 0.9; }
+                30% { opacity: 1; }
+                40% { opacity: 0.85; }
+                60% { opacity: 1; }
+                100% { opacity: 1; }
+            }
+
+            /* stronger pulse for neon effect */
+            @keyframes neonPulse {
+                0% { box-shadow: 0 0 8px rgba(186,0,255,0.25); }
+                50% { box-shadow: 0 0 30px rgba(186,0,255,0.5); }
+                100% { box-shadow: 0 0 8px rgba(186,0,255,0.25); }
+            }
+
+        .modal-content::after {
+            /* center mask to hide gradient inside modal so only border is visible */
+            content: "";
+            position: absolute;
+            inset: var(--modal-border-thickness);
+            z-index: 2;
+            pointer-events: none;
+            border-radius: calc(0.5rem - var(--modal-border-thickness));
+            background: #0b0b0b; /* same as modal background */
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Ensure modal children render above the animated border */
+        .modal-content .modal-header,
+        .modal-content .modal-body,
+        .modal-content .modal-footer { position: relative; z-index: 3; }
+        /* Enhanced override: sliding gradient border + subtle glow */
+        @keyframes modalGradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes modalPulse { 0% { box-shadow: 0 0 0 rgba(0,0,0,0); } 50% { box-shadow: 0 0 10px rgba(140,45,226,0.08); } 100% { box-shadow: 0 0 0 rgba(0,0,0,0); } }
+        .modal-content { animation: modalPulse 4s ease-in-out infinite, neonPulse 3.2s ease-in-out infinite; }
+        .modal-content::before { background-size: 250% 100% !important; animation: modalGradientShift 3.6s linear infinite !important; filter: drop-shadow(0 0 10px rgba(140,45,226,0.12)); }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <div id="particles-js"></div>
+
+        <!-- SVG filter for electric/displacement border effect -->
+        <svg width="0" height="0" style="position:absolute">
+            <defs>
+                <filter id="electric">
+                    <!-- stronger, faster turbulence for jagged lightning -->
+                    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="5" result="turb">
+                        <animate attributeName="baseFrequency" dur="1.8s" values="0.02;0.12;0.04;0.02" repeatCount="indefinite" />
+                    </feTurbulence>
+                    <!-- larger displacement for rough edges -->
+                    <feDisplacementMap in="SourceGraphic" in2="turb" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+                    <!-- slight color boost to keep result vivid (leave final color to CSS glow) -->
+                    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+                </filter>
+            </defs>
+        </svg>
+
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-4 sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-2" href="#"><span class="text-danger">S</span>M</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto gap-4 fw-medium">
+                        <li class="nav-item"><a class="nav-link text-white" href="#home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#skills">Skills</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section id="home" class="container py-5 mt-lg-5">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-md-6 order-2 order-md-1">
+                    <h5 class="text-secondary letter-spacing mb-3">WELCOME TO MY WORLD</h5>
+                    <h1 class="display-2 fw-bold mb-3">Hi, I'm <span class="text-danger">Syeda Malaika</span></h1>
+                    <h2 class="h2 mb-4">a <span class="text-light">Professional Web Developer.</span></h2>
+                    <p class="text-secondary fs-5 mb-5 w-75">Designing and building high-quality websites and digital experiences with modern tools.</p>
+                    
+                    <div class="d-flex gap-4 mb-5">
+                        <a href="#contact" class="btn btn-danger btn-lg px-5 py-3 rounded-0 shadow-lg">HIRE ME</a>
+                        <div class="social-icons d-flex align-items-center gap-3">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 order-1 order-md-2 text-center">
+                    <div class="hexagon-image mx-auto shadow-lg">
+                        <img src="mypic.jpg" alt="Syeda Malaika">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="container py-100">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <div class="about-card p-4 border border-secondary rounded-4">
+                        <h3 class="text-danger mb-4">Who Am I?</h3>
+                        <p class="text-secondary lead">I am a creative Web Developer based in Pakistan, dedicated to building beautiful and functional web applications.</p>
+                    </div>
+                </div>
+                <div class="col-md-7 ps-lg-5">
+                    <h2 class="display-5 fw-bold mb-4">Personal Info</h2>
+                    <div class="row g-4">
+                        <div class="col-6"><strong>Name:</strong> <span class="text-secondary">Syeda Malaika</span></div>
+                        <div class="col-6"><strong>Freelance:</strong> <span class="text-success">Available</span></div>
+                        <div class="col-6"><strong>Email:</strong> <span class="text-secondary">malaika@example.com</span></div>
+                        <div class="col-6"><strong>Experience:</strong> <span class="text-secondary">1+ Years</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="skills" class="py-5 bg-black overflow-hidden">
+    <div class="container mb-5 text-center">
+        <h2 class="display-5 fw-bold">Professional <span class="text-danger">Skills</span></h2>
+    </div>
+
+    <div class="skills-wrapper">
+        <div class="skills-track">
+            <div class="skill-item"><i class="fas fa-mobile-alt text-info"></i> Mobile Graphics</div>
+            <div class="skill-item"><i class="fas fa-palette text-warning"></i> Canva Editor</div>
+            <div class="skill-item"><i class="fas fa-bullhorn text-primary"></i> Social Marketing</div>
+            <div class="skill-item"><i class="fab fa-html5 text-danger"></i> Web Development</div>
+            <div class="skill-item"><i class="fas fa-file-word text-primary"></i> MS Word</div>
+            <div class="skill-item"><i class="fas fa-file-excel text-success"></i> MS Excel</div>
+            <div class="skill-item"><i class="fab fa-bootstrap text-purple" style="color:#7952b3;"></i> Bootstrap</div>
+            <div class="skill-item"><i class="fab fa-js text-warning"></i> JavaScript</div>
+            
+            <div class="skill-item"><i class="fas fa-mobile-alt text-info"></i> Mobile Graphics</div>
+            <div class="skill-item"><i class="fas fa-palette text-warning"></i> Canva Editor</div>
+            <div class="skill-item"><i class="fas fa-bullhorn text-primary"></i> Social Marketing</div>
+            <div class="skill-item"><i class="fab fa-html5 text-danger"></i> Web Development</div>
+            <div class="skill-item"><i class="fas fa-file-word text-primary"></i> MS Word</div>
+            <div class="skill-item"><i class="fas fa-file-excel text-success"></i> MS Excel</div>
+            <div class="skill-item"><i class="fab fa-bootstrap text-purple" style="color:#7952b3;"></i> Bootstrap</div>
+            <div class="skill-item"><i class="fab fa-js text-warning"></i> JavaScript</div>
+        </div>
+    </div>
+</section>    
+<!-- Skill details modal -->
+<div class="modal fade" id="skillModal" tabindex="-1" aria-labelledby="skillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="skillModalLabel">Skill</h5>
+                <button id="skillModalCloseTop" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closeSkillModalNow(event)"></button>
+            </div>
+            <div class="modal-body" id="skillModalBody">
+                <!-- Filled dynamically -->
+            </div>
+            <div class="modal-footer border-top-0">
+                <button id="skillModalCloseFooter" type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeSkillModalNow(event)">Close</button>
+            </div>
+            <!-- overlay clickable area (top-right) as last resort when close button is blocked -->
+            <button id="skillModalCloseOverlay" onclick="closeSkillModalNow(event)" aria-hidden="true" style="position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:transparent;border:none;z-index:40000;pointer-events:auto"></button>
+        </div>
+    </div>
+</div>
+  <section id="projects" class="container py-100">
+
+            <h2 class="text-center fw-bold mb-5 font-size-lg">Featured Projects</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <a href="https://via.placeholder.com/1200x800?text=Modern+E-Commerce" target="_blank" rel="noopener noreferrer"><img src="https://via.placeholder.com/600x375?text=Modern+E-Commerce" alt="Modern E-Commerce"></a>
+                        <div class="project-overlay">
+                            <h4>Modern E-Commerce</h4>
+                            <p>Bootstrap & JavaScript</p>
+                        </div>
+                        <div class="project-caption">
+                            <h5>Modern E-Commerce</h5>
+                            <p class="text-secondary small">A responsive e-commerce template built with Bootstrap and JavaScript.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <a href="https://via.placeholder.com/1200x800?text=Branding+Design" target="_blank" rel="noopener noreferrer"><img src="https://via.placeholder.com/600x375?text=Branding+Design" alt="Branding Design"></a>
+                        <div class="project-overlay">
+                            <h4>Branding Design</h4>
+                            <p>Canva & Marketing</p>
+                        </div>
+                        <div class="project-caption">
+                            <h5>Branding Design</h5>
+                            <p class="text-secondary small">Visual branding and marketing assets created using Canva.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <a href="https://via.placeholder.com/1200x800?text=Admin+Dashboard" target="_blank" rel="noopener noreferrer"><img src="https://via.placeholder.com/600x375?text=Admin+Dashboard" alt="Admin Dashboard"></a>
+                        <div class="project-overlay">
+                            <h4>Admin Dashboard</h4>
+                            <p>React & CSS</p>
+                        </div>
+                        <div class="project-caption">
+                            <h5>Admin Dashboard</h5>
+                            <p class="text-secondary small">A modern admin UI built with React and custom CSS components.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="container py-100">
+            <div class="bg-dark p-5 rounded-5 border border-secondary shadow-lg">
+                <div class="row g-5">
+                    <div class="col-md-5">
+                        <h2 class="fw-bold mb-4">Let's talk about your <span class="text-danger">Project</span></h2>
+                        <p class="text-secondary">Fill out the form to start a conversation with me.</p>
+                        <div class="mt-4">
+                            <p><i class="fas fa-envelope text-danger me-2"></i> malaika@email.com</p>
+                            <p><i class="fas fa-phone text-danger me-2"></i> +92 300 1234567</p>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <form class="row g-3">
+                            <div class="col-md-6"><input id="fullName" type="text" class="form-control bg-transparent text-white py-3" placeholder="Full Name"></div>
+                            <div class="col-md-6"><input id="emailAddress" type="email" class="form-control bg-transparent text-white py-3" placeholder="Email Address"></div>
+                            <div class="col-12"><textarea class="form-control bg-transparent text-white py-3" rows="5" placeholder="Message"></textarea></div>
+                            <div class="col-12"><button class="btn btn-danger w-100 py-3 rounded-pill fw-bold">SEND MESSAGE</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center py-5 border-top border-dark mt-5 text-secondary">
+            <p>&copy; 2025 Syeda Malaika. Portfolio Created with Love.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#dc3545" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" } }
+            }
+        });
+    </script>
+    <script>
+        (function(){
+            const skills = [
+                {icon: 'fas fa-mobile-alt', title: 'Mobile Graphics'},
+                {icon: 'fas fa-palette', title: 'Canva Editor'},
+                {icon: 'fas fa-share-alt', title: 'Marketing'},
+                {icon: 'fab fa-react', title: 'React.js'},
+                {icon: 'fas fa-file-word', title: 'MS Word'},
+                {icon: 'fas fa-file-excel', title: 'MS Excel'},
+                {icon: 'fab fa-bootstrap', title: 'Bootstrap'},
+                {icon: 'fab fa-js', title: 'JavaScript'}
+            ];
+
+            const perSlide = 4;
+            const inner = document.getElementById('skillCarouselInner');
+            if (!inner) return;
+
+            for (let i = 0; i < skills.length; i += perSlide) {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-item' + (i === 0 ? ' active' : '');
+
+                const row = document.createElement('div');
+                row.className = 'row g-4';
+
+                for (let j = 0; j < perSlide && (i + j) < skills.length; j++) {
+                    const s = skills[i + j];
+                    const col = document.createElement('div');
+                    col.className = 'col-md-3';
+                    col.innerHTML = `<div class="skill-box"><i class="${s.icon}"></i><h5>${s.title}</h5></div>`;
+                    row.appendChild(col);
+                }
+
+                slide.appendChild(row);
+                inner.appendChild(slide);
+            }
+
+            // Ensure Bootstrap carousel is (re)initialized after dynamic slides
+            const carouselEl = document.getElementById('skillCarousel');
+            if (carouselEl) {
+                if (window.bootstrap && bootstrap.Carousel) {
+                    new bootstrap.Carousel(carouselEl, { interval: 2000, pause: false, ride: 'carousel' });
+                } else {
+                    // fallback: simple JS cycle if Bootstrap isn't available yet
+                    const items = inner.querySelectorAll('.carousel-item');
+                    if (items.length > 1) {
+                        let idx = 0;
+                        setInterval(() => {
+                            items[idx].classList.remove('active');
+                            idx = (idx + 1) % items.length;
+                            items[idx].classList.add('active');
+                        }, 2000);
+                    }
+                }
+            }
+        })();
+    </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const modalEl = document.getElementById('skillModal');
+                if (!modalEl || !window.bootstrap) return;
+                const skillModal = new bootstrap.Modal(modalEl);
+                const modalTitle = document.getElementById('skillModalLabel');
+                const modalBody = document.getElementById('skillModalBody');
+
+                const details = {
+                    'Mobile Graphics': 'Designing mobile-friendly graphics and UI assets for apps and social posts.',
+                    'Canva Editor': 'Creating visual content, banners, and social media assets using Canva.',
+                    'Social Marketing': 'Planning and running social media campaigns to increase engagement.',
+                    'Web Development': 'Building responsive websites using HTML, CSS and modern JavaScript.',
+                    'MS Word': 'Document creation, formatting, and templates for professional documents.',
+                    'MS Excel': 'Data organization, formulas, and basic analysis using Excel.',
+                    'Bootstrap': 'Responsive layouts and components using Bootstrap framework.',
+                    'JavaScript': 'Interactive features, DOM manipulation and frontend logic with JS.'
+                };
+
+                // Use event delegation on the track to handle clicks (works during CSS animation)
+                const track = document.querySelector('.skills-track');
+                if (track) {
+                    track.addEventListener('click', function (ev) {
+                        const el = ev.target.closest('.skill-item');
+                        if (!el) return;
+                        console.log('Skill clicked:', el.innerText.trim());
+                        const title = el.innerText.trim();
+                        modalTitle.textContent = title;
+                        const desc = details[title] || 'More information about this skill will be added soon.';
+                        modalBody.innerHTML = `<p class="text-secondary">${desc}</p>`;
+                        try { skillModal.show(); }
+                        catch (e) { alert(title + '\n\n' + desc); }
+                    });
+                } else {
+                    // Fallback: attach direct listeners
+                    document.querySelectorAll('.skill-item').forEach(function (el) {
+                        el.addEventListener('click', function () {
+                            console.log('Skill clicked (fallback):', el.innerText.trim());
+                            const title = el.innerText.trim();
+                            modalTitle.textContent = title;
+                            const desc = details[title] || 'More information about this skill will be added soon.';
+                            modalBody.innerHTML = `<p class="text-secondary">${desc}</p>`;
+                            try { skillModal.show(); } catch (e) { alert(title + '\n\n' + desc); }
+                        });
+                    });
+                }
+
+                // Animated modal show/hide and robust close handling
+                const modalContent = modalEl.querySelector('.modal-content');
+                let hiding = false;
+
+                function cleanupHideImmediate() {
+                    try { skillModal.hide(); } catch (e) { }
+                    try { document.body.classList.remove('modal-open'); } catch (e) { }
+                    document.querySelectorAll('.modal-backdrop').forEach(function(b){ b.remove(); });
+                    try { modalEl.classList.remove('show'); modalEl.style.display = 'none'; modalEl.setAttribute('aria-hidden','true'); } catch (e) { }
+                    hiding = false;
+                }
+
+                function startHideAnimation() {
+                    if (hiding) return;
+                    hiding = true;
+                    if (modalContent) {
+                        modalContent.classList.remove('modal-animate-in');
+                        modalContent.classList.add('modal-animate-out');
+                    } else {
+                        cleanupHideImmediate();
+                    }
+                }
+
+                // close controls -> start animated hide; also attach pointerdown immediate-hide as a robust fallback
+                modalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function (btn) {
+                    btn.addEventListener('click', function (ev) {
+                        ev.preventDefault();
+                        startHideAnimation();
+                    });
+                    // pointerdown fires earlier than click and helps when clicks are intercepted
+                    btn.addEventListener('pointerdown', function (ev) {
+                        try { ev.preventDefault(); } catch (e) {}
+                        cleanupHideImmediate();
+                    });
+                });
+
+                // explicit fallback IDs
+                const topClose = document.getElementById('skillModalCloseTop');
+                const footClose = document.getElementById('skillModalCloseFooter');
+                [topClose, footClose].forEach(function (btn) {
+                    if (!btn) return;
+                    btn.addEventListener('click', function (ev) {
+                        ev.preventDefault();
+                        startHideAnimation();
+                    });
+                    btn.addEventListener('pointerdown', function (ev) {
+                        try { ev.preventDefault(); } catch (e) {}
+                        cleanupHideImmediate();
+                    });
+                });
+
+                // ESC -> start hide
+                document.addEventListener('keydown', function (ev) {
+                    if (ev.key === 'Escape') startHideAnimation();
+                });
+
+                // Ensure backdrop cleaned when bootstrap emits hidden event
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    document.querySelectorAll('.modal-backdrop').forEach(function(b){ b.remove(); });
+                });
+
+                // Fallback: detect clicks at close-button coords
+                document.addEventListener('click', function (ev) {
+                    if (!modalEl.classList.contains('show')) return;
+                    const topBtn = document.getElementById('skillModalCloseTop');
+                    const footBtn = document.getElementById('skillModalCloseFooter');
+                    const candidates = [topBtn, footBtn].filter(Boolean);
+                    if (candidates.length === 0) return;
+                    const x = ev.clientX, y = ev.clientY;
+                    for (const btn of candidates) {
+                        const r = btn.getBoundingClientRect();
+                        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+                            ev.preventDefault();
+                            startHideAnimation();
+                            return;
+                        }
+                    }
+                }, true);
+
+                // Robust capture handler: catch any click on elements with data-bs-dismiss or the close IDs
+                document.addEventListener('click', function (ev) {
+                    if (!modalEl.classList.contains('show')) return;
+                    const closeEl = ev.target.closest('[data-bs-dismiss="modal"], #skillModalCloseTop, #skillModalCloseFooter');
+                    if (closeEl) {
+                        ev.stopImmediatePropagation();
+                        ev.preventDefault();
+                        startHideAnimation();
+                    }
+                }, true);
+
+                // Listen for animation end to finalize hide or clear enter class
+                if (modalContent) {
+                    modalContent.addEventListener('animationend', function () {
+                        if (modalContent.classList.contains('modal-animate-out')) {
+                            modalContent.classList.remove('modal-animate-out');
+                            cleanupHideImmediate();
+                        } else if (modalContent.classList.contains('modal-animate-in')) {
+                            modalContent.classList.remove('modal-animate-in');
+                        }
+                    });
+                }
+
+                // When showing, add animate-in class for nicer entrance
+                // Wrap original show call so skillModal.show() is still used
+                const originalShow = skillModal.show.bind(skillModal);
+                skillModal.show = function () {
+                    if (modalContent) {
+                        modalContent.classList.remove('modal-animate-out');
+                        modalContent.classList.add('modal-animate-in');
+                    }
+                    try { originalShow(); } catch (e) { }
+                };
+            });
+        </script>
+</body>
+</html>
